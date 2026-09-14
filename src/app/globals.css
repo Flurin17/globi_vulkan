@@ -425,11 +425,18 @@ img {
   box-shadow: 0 0 0 5px var(--cream);
   font-size: 10px;
   font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
   pointer-events: none;
 }
+.swiss-seal > span:not(.seal-cross) {
+  font-size: 0.9em;
+}
 .seal-cross {
-  width: 40px;
-  height: 40px;
+  /* Scale with the badge text so both labels stay inside the circle. */
+  width: 2.5em;
+  height: 2.5em;
+  flex-shrink: 0;
 }
 .seal-cross::before {
   inset: 8%;
@@ -1107,10 +1114,6 @@ img {
     top: 10%;
     font-size: 9px;
   }
-  .seal-cross {
-    font-size: 36px;
-    line-height: 32px;
-  }
 }
 @media (max-width: 1050px) {
   .shell {
@@ -1220,10 +1223,6 @@ img {
     top: 2%;
     right: 3%;
     font-size: 8px;
-  }
-  .seal-cross {
-    font-size: 33px;
-    line-height: 28px;
   }
   .product-halo {
     height: 76%;
@@ -1446,10 +1445,6 @@ img {
     height: 65px;
     box-shadow: 0 0 0 4px var(--cream);
     font-size: 7px;
-  }
-  .seal-cross {
-    width: 27px;
-    height: 27px;
   }
   .product-caption {
     bottom: 0;
