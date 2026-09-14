@@ -146,13 +146,16 @@ const vertexShader = `
   attribute float aTrail;
   uniform float uTime;
   uniform float uEmissionTime;
+  uniform float uGroundY;
+  uniform float uProductScale;
   uniform float uStrength;
   uniform float uRatio;
   varying float vAlpha;
   varying float vSilver;
   varying float vAge;
   void main() {
-    float life = 1.05 + fract(aSeed * 43.19) * .85;
+    // Keep sparks alive long enough to finish their descent to the ground.
+    float life = 2.2 + fract(aSeed * 43.19) * .35;
     float headAge = mod(aSeed * 71.31 + uTime, life);
     float age = headAge - aTrail * .012;
     float t = max(age, 0.0);
@@ -168,10 +171,15 @@ const vertexShader = `
     gl_PointSize = clamp((3.1 + fract(aSeed * 7.0) * 1.8) * uRatio *
       (5.0 / -mvPosition.z) * (1.0 - aTrail * .035), .8, 9.0);
     vAge = t / life;
-    // Do not show pre-aged particles at ignition or sparks below the nozzle.
+    // Below the opening, leave the cone's silhouette clear while sparks fall
+    // beside it. Fade at the actual ground plane, not at the nozzle height.
+    float coneDepth = clamp(-p.y / (3.18 * .936 * uProductScale), 0.0, 1.0);
+    float coneRadius = mix(.168, .69, coneDepth) * uProductScale + .035;
+    float besideCone = smoothstep(coneRadius, coneRadius + .06, abs(p.x));
+    float coneClearance = mix(besideCone, 1.0, smoothstep(-.08, .04, p.y));
     vAlpha = step(0.0, age) * step(headAge, uEmissionTime) * smoothstep(0.0, .04, uStrength) *
-      (1.0 - smoothstep(.6, 1.0, vAge)) * exp(-aTrail * .095) *
-      smoothstep(.02, .10, p.y);
+      (1.0 - smoothstep(.85, 1.0, vAge)) * exp(-aTrail * .095) *
+      smoothstep(uGroundY, uGroundY + .08, p.y) * coneClearance;
     vSilver = step(.72, fract(aSeed * 91.7));
   }
 `;
@@ -270,6 +278,8 @@ function Fountain({ progress, paused }: Pick<Props, "progress" | "paused">) {
         uniforms: {
           uTime: { value: 0 },
           uEmissionTime: { value: 0 },
+          uGroundY: { value: -3.18 },
+          uProductScale: { value: 1 },
           uStrength: { value: 0 },
           uRatio: { value: gl.getPixelRatio() },
         },
@@ -326,6 +336,8 @@ function Fountain({ progress, paused }: Pick<Props, "progress" | "paused">) {
       points.current.position.set(0, 1.59, 0)
         .applyEuler(emissionRotation).multiplyScalar(state.scale);
       points.current.position.y -= 0.05 + state.drop;
+      shader.uniforms.uGroundY.value = -1.86 - points.current.position.y;
+      shader.uniforms.uProductScale.value = state.scale;
       points.current.visible = state.fountain > 0;
       if (smoke.current) {
         smoke.current.position.copy(points.current.position);
