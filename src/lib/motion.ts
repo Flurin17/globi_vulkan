@@ -12,12 +12,14 @@ export function sceneAtProgress(value: number) {
   const fuseBurn = clamp((progress - 0.56) / 0.17);
   const ignition = smooth((progress - 0.73) / 0.05);
   const fountain = smooth((progress - 0.78) / 0.14);
+  const settle = smooth((progress - 0.58) / 0.24);
   return {
     progress,
     rotation: turn * Math.PI * 2,
     tilt: -0.16 * (1 - smooth(progress / 0.5)),
-    scale: 1 - smooth((progress - 0.58) / 0.24) * 0.58,
-    drop: smooth((progress - 0.58) / 0.24) * 1.22,
+    scale: 1 - settle * 0.58,
+    drop: settle * 1.22,
+    settle,
     fuseBurn,
     ignition,
     fountain,

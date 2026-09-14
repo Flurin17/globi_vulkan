@@ -12,7 +12,8 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from "react";
-import { clamp, sceneAtProgress } from "@/lib/motion";
+import { sceneAtProgress } from "@/lib/motion";
+import { storyProgress, storyViewport } from "@/lib/story-scroll";
 import { probeWebGL, isStaticPresentation } from "@/lib/scene-support";
 
 const Scene = dynamic(() => import("./ProductScene"), { ssr: false });
@@ -50,6 +51,7 @@ class SceneBoundary extends Component<
 
 export default function Hero({ children }: { children: ReactNode }) {
   const container = useRef<HTMLElement>(null);
+  const sticky = useRef<HTMLDivElement>(null);
   const progressBar = useRef<HTMLDivElement>(null);
   const progress = useRef(0);
   const [phase, setPhase] = useState(0);
@@ -75,15 +77,32 @@ export default function Hero({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let frame = 0;
+    let viewport: ReturnType<typeof storyViewport> | undefined;
+    const updateViewport = () => {
+      const next = storyViewport(
+        viewport,
+        { width: window.innerWidth, height: window.innerHeight },
+        window.matchMedia("(pointer: coarse)").matches,
+      );
+      if (next !== viewport) {
+        viewport = next;
+        container.current?.style.setProperty(
+          "--story-viewport-height",
+          `${next.height}px`,
+        );
+      }
+    };
     const measure = () => {
       frame = 0;
-      if (!container.current) return;
+      if (!container.current || !sticky.current) return;
       const rect = container.current.getBoundingClientRect();
       const value = staticMode
         ? 0
-        : clamp(-rect.top / Math.max(1, rect.height - window.innerHeight));
+        : storyProgress(rect.top, rect.height, sticky.current.offsetHeight);
       progress.current = value;
-      const next = sceneAtProgress(value).phase;
+      const scene = sceneAtProgress(value);
+      container.current.style.setProperty("--story-settle", `${scene.settle}`);
+      const next = scene.phase;
       setPhase((previous) => (previous === next ? previous : next));
       if (progressBar.current)
         progressBar.current.style.transform = `scaleX(${value})`;
@@ -91,13 +110,22 @@ export default function Hero({ children }: { children: ReactNode }) {
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(measure);
     };
+    const resize = () => {
+      updateViewport();
+      schedule();
+    };
+    updateViewport();
+    const observer = new ResizeObserver(schedule);
+    if (container.current) observer.observe(container.current);
+    if (sticky.current) observer.observe(sticky.current);
     schedule();
     window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
+    window.addEventListener("resize", resize);
     return () => {
       cancelAnimationFrame(frame);
+      observer.disconnect();
       window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
+      window.removeEventListener("resize", resize);
     };
   }, [staticMode]);
 
@@ -109,7 +137,7 @@ export default function Hero({ children }: { children: ReactNode }) {
       aria-label="Der Globi-Vulkan"
       data-phase={staticMode ? 0 : phase}
     >
-      <div className="hero-sticky">
+      <div className="hero-sticky" ref={sticky}>
         <div className="hero-inner shell">
           <div className="hero-copy">
             <div className="eyebrow">

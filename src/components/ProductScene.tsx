@@ -437,6 +437,8 @@ export default function ProductScene(props: Props) {
   return (
     <div className="webgl-scene" ref={container} aria-hidden="true">
       <Canvas
+        resize={{ scroll: false, offsetSize: true }}
+        style={{ pointerEvents: "none" }}
         scene={{ environmentIntensity: 0.55 }}
         camera={{ position: [0, 0.25, 6.8], fov: 36 }}
         dpr={[1, 1.65]}
