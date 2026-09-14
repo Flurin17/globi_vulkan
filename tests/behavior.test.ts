@@ -2,6 +2,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { NodeIO } from "@gltf-transform/core";
+import { createHash } from "node:crypto";
+import productAsset from "../src/data/product-asset.json";
 import { sceneAtProgress } from "../src/lib/motion";
 import { filterRetailers, directionsUrl } from "../src/lib/retailers";
 import { retailers } from "../src/data/retailers";
@@ -117,9 +119,11 @@ test("source directory keeps duplicate towns, seasonal notes and all four websit
 });
 
 test("standalone GLB contains textured full-circle geometry, fuse and valid mesh data", async () => {
-  const binary = await readFile("public/assets/globi-vulkan.glb");
+  const binary = await readFile(`public${productAsset.url}`);
+  const hash = createHash("sha256").update(binary).digest("hex").slice(0, 16);
+  assert.equal(productAsset.url, `/assets/globi-vulkan.${hash}.glb`, "Cache identity must match the served content");
   assert.equal(binary.readUInt32LE(0), 0x46546c67);
-  assert.ok(binary.byteLength < 2_500_000, "Model should stay below 2.5 MB");
+  assert.ok(binary.byteLength < 1_100_000, "Model should stay below 1.1 MB");
   const document = await new NodeIO().readBinary(binary);
   assert.equal(document.getRoot().listTextures().length, 3);
   assert.ok(

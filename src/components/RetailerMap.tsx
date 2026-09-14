@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import L from "leaflet";
 import "leaflet.markercluster";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
-import { ArrowUpRight, LocateFixed, X } from "lucide-react";
+import { ArrowUpRight, X } from "lucide-react";
+import RetailerMapShell from "./RetailerMapShell";
 import { directionsUrl, type Retailer } from "@/lib/retailers";
 
 const logo = "/assets/globi-logo.svg";
@@ -133,12 +133,7 @@ export default function RetailerMap({ retailers }: { retailers: Retailer[] }) {
   }
 
   return (
-    <div className="native-map">
-      <div className="native-map-heading">
-        <Image src={logo} alt="Globi" width={118} height={40} unoptimized />
-        <div><strong>Dein Globi ist ganz in der Nähe.</strong><span>Entdecke unsere Verkaufsstellen.</span></div>
-        <button type="button" onClick={resetView} className="map-reset"><LocateFixed size={17} /><span>Übersicht</span></button>
-      </div>
+    <RetailerMapShell count={retailers.length} onReset={resetView}>
       <div className="native-map-viewport">
         <div ref={container} className="native-map-canvas" role="region" aria-label="Interaktive Karte der Globi-Vulkan Verkaufsstellen" aria-describedby="map-help" />
         {!retailers.length && <div className="map-notice">Keine Verkaufsstellen für diese Suche.</div>}
@@ -151,7 +146,6 @@ export default function RetailerMap({ retailers }: { retailers: Retailer[] }) {
           <button className="map-close" onClick={() => setSelectedId(null)} type="button" aria-label="Händlerdetails schliessen"><X size={18} /></button>
         </div>
       ) : null}
-      <div className="native-map-caption" id="map-help"><span>{retailers.length} {retailers.length === 1 ? "Verkaufsstelle" : "Verkaufsstellen"} auf der Karte</span><span>Globi antippen für Details · Zahlen zeigen mehrere Händler</span></div>
-    </div>
+    </RetailerMapShell>
   );
 }

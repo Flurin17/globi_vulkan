@@ -1,4 +1,5 @@
-import { readFile, mkdir } from "node:fs/promises";
+import { readFile, mkdir, writeFile, readdir, unlink } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { Document, NodeIO } from "@gltf-transform/core";
 import * as THREE from "three";
 import sharp from "sharp";
@@ -13,7 +14,7 @@ import {
 // Reproducible, standalone glTF 2.0 asset. No browser or Blender dependency.
 await mkdir("public/assets", { recursive: true });
 await sharp("public/assets/wrapper-source.png")
-  .jpeg({ quality: 94, chromaSubsampling: "4:4:4" })
+  .jpeg({ quality: 85, chromaSubsampling: "4:4:4", mozjpeg: true })
   .toFile("public/assets/globi-wrapper.jpg");
 const document = new Document();
 const buffer = document.createBuffer();
@@ -128,7 +129,9 @@ function mesh(name, geometry, material) {
       document
         .createAccessor()
         .setType("SCALAR")
-        .setArray(new Uint32Array(geometry.index.array))
+        .setArray(geometry.getAttribute("position").count <= 65536
+          ? new Uint16Array(geometry.index.array)
+          : new Uint32Array(geometry.index.array))
         .setBuffer(buffer),
     );
   const node = document
@@ -218,5 +221,13 @@ root.setExtras({
   units:
     "Metres in file are presentation units, not verified physical dimensions.",
 });
-await new NodeIO().write("public/assets/globi-vulkan.glb", document);
-console.log("Built public/assets/globi-vulkan.glb with embedded 360 wrapper.");
+const binary = await new NodeIO().writeBinary(document);
+const hash = createHash("sha256").update(binary).digest("hex").slice(0, 16);
+const filename = `globi-vulkan.${hash}.glb`;
+await writeFile(`public/assets/${filename}`, binary);
+await writeFile("src/data/product-asset.json", JSON.stringify({ url: `/assets/${filename}` }, null, 2) + "\n");
+for (const previous of await readdir("public/assets")) {
+  if (previous !== filename && /^globi-vulkan(?:\.[a-f0-9]{16})?\.glb$/.test(previous))
+    await unlink(`public/assets/${previous}`);
+}
+console.log(`Built ${filename}: ${binary.byteLength} bytes with embedded 360 wrapper.`);

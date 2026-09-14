@@ -20,7 +20,7 @@ pnpm assets:build # Rebuild the GLB and texture from the saved artwork
 
 ## Product assets
 
-- `public/assets/globi-vulkan.glb`: standalone model with embedded artwork, paper normal/roughness maps, a rear overlap seam, folded base, recessed top and green fuse with crossed olive strands. Rebuilds deterministically without external texture downloads.
+- `public/assets/globi-vulkan.<content-hash>.glb`: standalone model with embedded artwork, paper normal/roughness maps, a rear overlap seam, folded base, recessed top and green fuse with crossed olive strands. Rebuilds deterministically without external texture downloads.
 - `public/assets/globi-wrapper.jpg`: complete 360° wrapper texture.
 - `public/assets/wrapper-source.png`: source illustration used by the reproducible asset builder.
 - `public/assets/product-poster.jpg`: static product poster for loading, reduced motion and WebGL fallback.
@@ -32,7 +32,7 @@ The wrapper is an illustrated reconstruction from one front photograph. The rear
 
 `src/lib/motion.ts` maps bounded scroll progress to a reversible sequence: a complete turn, tip-to-base fuse consumption, Bengal glow, then a growing gold-and-silver fountain. `src/lib/fuse.ts` shares the fuse path and segment counts between the asset builder and viewer. The viewer removes complete tube segments from the outer end, moves an ember along the same path, and removes the entire fuse before the fountain starts. Reversing scroll restores it.
 
-The GLB contains the reusable static model; scroll and particle animation live in `src/components/ProductScene.tsx`. Studio environment lighting and soft shadows reveal the paper finish. The GPU fountain uses ballistic, cooling spark trails and translucent drifting smoke, with fewer particles on narrow canvases. Rendering pauses when the scene leaves the viewport or the visitor presses pause. Reduced-motion preference, WebGL unavailability, context loss and model-load failures show the poster instead.
+The GLB contains the reusable static model; scroll and particle animation live in `src/components/ProductScene.tsx`. Studio environment lighting and soft shadows reveal the paper finish. The GPU fountain uses ballistic, cooling spark trails and translucent drifting smoke, with fewer particles on narrow canvases. Static phases render on demand when scroll progress changes. The fuse and fountain request continuous frames only while active; rendering pauses when the scene leaves the viewport, the tab is hidden, or the visitor presses pause. The 3D bundle starts after the poster has painted and the browser is idle; data-saver visitors retain the static poster. Reduced-motion preference, WebGL unavailability, context loss and model-load failures show the poster instead.
 
 ## Retailers and external media
 
@@ -42,7 +42,7 @@ Search supports postcode, town, dealer name, multiple terms and common umlaut sp
 
 ## Page rendering
 
-Copy, page structure and metadata use Server Components. Search, media controls and the scroll controller use Client Components; the WebGL bundle is loaded client-side through `next/dynamic`. Fonts and image assets are served locally. `/index.html` permanently redirects to `/`.
+Copy, page structure and metadata use Server Components. Search, media controls and the scroll controller use Client Components; the WebGL bundle is loaded client-side through `next/dynamic`. Fonts and image assets are served locally. The asset builder records the model URL in `src/data/product-asset.json`; the content-hashed model receives one-year immutable caching. Run `pnpm assets:build` after changing model inputs and deploy the new model and manifest together. `/index.html` permanently redirects to `/`.
 
 No backend, checkout or live stock API is configured. Canonical metadata targets the original domain. The site has not been published.
 

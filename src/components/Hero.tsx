@@ -15,6 +15,7 @@ import {
 import { sceneAtProgress } from "@/lib/motion";
 import { storyProgress, storyViewport } from "@/lib/story-scroll";
 import { probeWebGL, isStaticPresentation } from "@/lib/scene-support";
+import { scheduleSceneStart } from "@/lib/scene-rendering";
 
 const Scene = dynamic(() => import("./ProductScene"), { ssr: false });
 const subscribeReduced = (listener: () => void) => {
@@ -26,6 +27,14 @@ const reducedSnapshot = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const serverSnapshot = () => false;
 const subscribeCapability = () => () => {};
+type Connection = EventTarget & { saveData?: boolean };
+const connection = () => (navigator as Navigator & { connection?: Connection }).connection;
+const dataSaverSnapshot = () => connection()?.saveData === true;
+const subscribeDataSaver = (listener: () => void) => {
+  const network = connection();
+  network?.addEventListener("change", listener);
+  return () => network?.removeEventListener("change", listener);
+};
 let webGLCapability: boolean | undefined;
 function capableSnapshot() {
   if (webGLCapability !== undefined) return webGLCapability;
@@ -54,10 +63,19 @@ export default function Hero({ children }: { children: ReactNode }) {
   const sticky = useRef<HTMLDivElement>(null);
   const progressBar = useRef<HTMLDivElement>(null);
   const progress = useRef(0);
+  const progressListeners = useRef(new Set<() => void>());
+  const subscribeProgress = useCallback((listener: () => void) => {
+    progressListeners.current.add(listener);
+    return () => { progressListeners.current.delete(listener); };
+  }, []);
   const [phase, setPhase] = useState(0);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const [paused, setPaused] = useState(false);
+  const [posterReady, setPosterReady] = useState(false);
+  const [stageVisible, setStageVisible] = useState(false);
+  const [sceneEnabled, setSceneEnabled] = useState(false);
+  const dataSaver = useSyncExternalStore(subscribeDataSaver, dataSaverSnapshot, serverSnapshot);
   const reduced = useSyncExternalStore(
     subscribeReduced,
     reducedSnapshot,
@@ -68,12 +86,23 @@ export default function Hero({ children }: { children: ReactNode }) {
     capableSnapshot,
     () => null,
   );
-  const staticMode = isStaticPresentation(reduced, webgl, failed);
+  const staticMode = isStaticPresentation(reduced || dataSaver, webgl, failed);
   const onReady = useCallback(() => setReady(true), []);
   const onError = useCallback(() => {
     setFailed(true);
     setReady(false);
   }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => setStageVisible(entry.isIntersecting));
+    if (sticky.current) observer.observe(sticky.current);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!posterReady || !stageVisible || !webgl || staticMode || sceneEnabled) return;
+    return scheduleSceneStart(window, () => setSceneEnabled(true));
+  }, [posterReady, stageVisible, webgl, staticMode, sceneEnabled]);
 
   useEffect(() => {
     let frame = 0;
@@ -99,7 +128,10 @@ export default function Hero({ children }: { children: ReactNode }) {
       const value = staticMode
         ? 0
         : storyProgress(rect.top, rect.height, sticky.current.offsetHeight);
-      progress.current = value;
+      if (progress.current !== value) {
+        progress.current = value;
+        for (const listener of progressListeners.current) listener();
+      }
       const scene = sceneAtProgress(value);
       container.current.style.setProperty("--story-settle", `${scene.settle}`);
       const next = scene.phase;
@@ -166,15 +198,18 @@ export default function Hero({ children }: { children: ReactNode }) {
                 src="/assets/product-poster.jpg"
                 alt="Globi-Vulkan mit blauem Papiermantel, Globi und Schweizer Fahne"
                 fill
-                priority
+                preload
+                onLoad={() => setPosterReady(true)}
+                onError={() => setPosterReady(true)}
                 sizes="(max-width: 700px) 100vw, 50vw"
                 className="product-poster"
               />
             </div>
-            {webgl && !staticMode ? (
+            {sceneEnabled && webgl && !staticMode ? (
               <SceneBoundary onError={onError}>
                 <Scene
                   progress={progress}
+                  subscribeProgress={subscribeProgress}
                   paused={paused}
                   onReady={onReady}
                   onError={onError}

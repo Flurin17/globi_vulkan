@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import { RetailerMapLoading } from "./RetailerMapShell";
 import {
   ArrowUpRight,
   Map,
@@ -14,7 +15,7 @@ import { directionsUrl, filterRetailers, type Retailer } from "@/lib/retailers";
 
 const RetailerMap = dynamic(() => import("./RetailerMap"), {
   ssr: false,
-  loading: () => <div className="map-loading" role="status">Die Globi-Karte wird geladen …</div>,
+  loading: () => <RetailerMapLoading />,
 });
 
 export default function RetailerFinder({
@@ -89,7 +90,7 @@ export default function RetailerFinder({
       {map ? (
         <div className="retailer-map" id="retailer-map">
           {mapReady ? <RetailerMap retailers={results} /> : (
-            <div className="map-loading" role="status">Die Globi-Karte wird geladen …</div>
+            <RetailerMapLoading count={results.length} />
           )}
         </div>
       ) : null}

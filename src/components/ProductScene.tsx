@@ -13,6 +13,8 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { sceneAtProgress } from "@/lib/motion";
+import { needsContinuousFrames } from "@/lib/scene-rendering";
+import productAsset from "@/data/product-asset.json";
 import {
   FUSE_POINTS,
   THREAD_SEGMENTS,
@@ -22,6 +24,7 @@ import {
 
 type Props = {
   progress: RefObject<number>;
+  subscribeProgress: (listener: () => void) => () => void;
   paused: boolean;
   onReady: () => void;
   onError: () => void;
@@ -30,7 +33,7 @@ type Props = {
 const PRODUCT_PITCH = 0.36;
 
 function Product({ progress, paused, onReady }: Omit<Props, "onError">) {
-  const gltf = useLoader(GLTFLoader, "/assets/globi-vulkan.glb");
+  const gltf = useLoader(GLTFLoader, productAsset.url);
   const model = useMemo(() => {
     const clone = gltf.scene.clone(true);
     clone.traverse((object) => {
@@ -229,10 +232,11 @@ function Fountain({ progress, paused }: Pick<Props, "progress" | "paused">) {
   const light = useRef<THREE.PointLight>(null);
   const nozzle = useRef<THREE.Group>(null);
   const { size, gl } = useThree();
+  const compact = size.width < 480;
   const emissionRotation = useMemo(() => new THREE.Euler(), []);
   const geometry = useMemo(() => {
-    const sparks = size.width < 480 ? 900 : 1800;
-    const trailLength = size.width < 480 ? 9 : 12;
+    const sparks = compact ? 900 : 1800;
+    const trailLength = compact ? 9 : 12;
     const count = sparks * trailLength;
     const result = new THREE.BufferGeometry();
     result.setAttribute(
@@ -257,7 +261,7 @@ function Fountain({ progress, paused }: Pick<Props, "progress" | "paused">) {
       ),
     );
     return result;
-  }, [size.width]);
+  }, [compact]);
   const material = useMemo(
     () =>
       new THREE.ShaderMaterial({
@@ -423,17 +427,38 @@ function Lifecycle({ onError }: Pick<Props, "onError">) {
   return null;
 }
 
+function RenderDriver({ progress, subscribeProgress, active }: Pick<Props, "progress" | "subscribeProgress"> & { active: boolean }) {
+  const invalidate = useThree((state) => state.invalidate);
+  useEffect(() => {
+    if (!active) return;
+    invalidate();
+    return subscribeProgress(() => invalidate());
+  }, [active, invalidate, subscribeProgress]);
+  useFrame(() => {
+    if (needsContinuousFrames(progress.current, active)) invalidate();
+  });
+  return null;
+}
+
 export default function ProductScene(props: Props) {
   const container = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
+  const [pageVisible, setPageVisible] = useState(true);
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setVisible(entry.isIntersecting),
       { rootMargin: "80px" },
     );
     if (container.current) observer.observe(container.current);
-    return () => observer.disconnect();
+    const visibilityChanged = () => setPageVisible(document.visibilityState === "visible");
+    visibilityChanged();
+    document.addEventListener("visibilitychange", visibilityChanged);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", visibilityChanged);
+    };
   }, []);
+  const active = visible && pageVisible && !props.paused;
   return (
     <div className="webgl-scene" ref={container} aria-hidden="true">
       <Canvas
@@ -442,8 +467,8 @@ export default function ProductScene(props: Props) {
         scene={{ environmentIntensity: 0.55 }}
         camera={{ position: [0, 0.25, 6.8], fov: 36 }}
         dpr={[1, 1.65]}
-        shadows="soft"
-        frameloop={visible && !props.paused ? "always" : "demand"}
+        shadows={{ type: THREE.PCFShadowMap }}
+        frameloop="demand"
         gl={{ antialias: true, alpha: true, powerPreference: "low-power" }}
         onCreated={({ gl }) => {
           gl.setClearColor(0x000000, 0);
@@ -453,11 +478,12 @@ export default function ProductScene(props: Props) {
       >
         <Studio />
         <Suspense fallback={null}>
-          <Product {...props} />
-          <Fountain {...props} />
-          <Grounding {...props} />
+          <Product {...props} paused={!active} />
+          <Fountain {...props} paused={!active} />
+          <Grounding {...props} paused={!active} />
         </Suspense>
         <Lifecycle onError={props.onError} />
+        <RenderDriver progress={props.progress} subscribeProgress={props.subscribeProgress} active={active} />
       </Canvas>
     </div>
   );
