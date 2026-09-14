@@ -145,6 +145,7 @@ const vertexShader = `
   attribute float aSeed;
   attribute float aTrail;
   uniform float uTime;
+  uniform float uEmissionTime;
   uniform float uStrength;
   uniform float uRatio;
   varying float vAlpha;
@@ -167,9 +168,10 @@ const vertexShader = `
     gl_PointSize = clamp((3.1 + fract(aSeed * 7.0) * 1.8) * uRatio *
       (5.0 / -mvPosition.z) * (1.0 - aTrail * .035), .8, 9.0);
     vAge = t / life;
-    vAlpha = step(0.0, age) * smoothstep(0.0, .04, uStrength) *
+    // Do not show pre-aged particles at ignition or sparks below the nozzle.
+    vAlpha = step(0.0, age) * step(headAge, uEmissionTime) * smoothstep(0.0, .04, uStrength) *
       (1.0 - smoothstep(.6, 1.0, vAge)) * exp(-aTrail * .095) *
-      smoothstep(-.5, -.1, p.y);
+      smoothstep(.02, .10, p.y);
     vSilver = step(.72, fract(aSeed * 91.7));
   }
 `;
@@ -267,6 +269,7 @@ function Fountain({ progress, paused }: Pick<Props, "progress" | "paused">) {
       new THREE.ShaderMaterial({
         uniforms: {
           uTime: { value: 0 },
+          uEmissionTime: { value: 0 },
           uStrength: { value: 0 },
           uRatio: { value: gl.getPixelRatio() },
         },
@@ -314,6 +317,9 @@ function Fountain({ progress, paused }: Pick<Props, "progress" | "paused">) {
     if (points.current) {
       const shader = points.current.material as THREE.ShaderMaterial;
       shader.uniforms.uTime.value += Math.min(delta, 0.05);
+      shader.uniforms.uEmissionTime.value = state.fountain > 0
+        ? shader.uniforms.uEmissionTime.value + Math.min(delta, 0.05)
+        : 0;
       shader.uniforms.uStrength.value = state.fountain;
       shader.uniforms.uRatio.value = gl.getPixelRatio();
       emissionRotation.set(PRODUCT_PITCH, state.rotation, state.tilt);
@@ -347,6 +353,7 @@ function Fountain({ progress, paused }: Pick<Props, "progress" | "paused">) {
         geometry={geometry}
         material={material}
         frustumCulled={false}
+        visible={false}
         renderOrder={2}
       />
       <pointLight ref={light} color="#ffcc58" intensity={0} distance={4} />
