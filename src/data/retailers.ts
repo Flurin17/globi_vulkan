@@ -5,6 +5,7 @@ import type { Retailer } from "@/lib/retailers";
 export const retailers: Retailer[] = [
   {
     id: "st-ursen",
+    coordinates: [46.7923793, 7.215543],
     name: "Arnold Feuerwerk",
     postcode: "1717",
     town: "St. Ursen",
@@ -12,6 +13,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "bern",
+    coordinates: [46.944309, 7.435913],
     name: "Stärnehimu Feuerwerk GmbH",
     postcode: "3011",
     town: "Bern",
@@ -19,6 +21,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "biel",
+    coordinates: [47.139773, 7.2440039],
     name: "Beyeler Dekor",
     postcode: "2502",
     town: "Biel",
@@ -26,6 +29,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "zollikofen",
+    coordinates: [46.9936868, 7.4571369],
     name: "Papeterie Hell GmbH",
     postcode: "3052",
     town: "Zollikofen",
@@ -33,6 +37,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "hasle",
+    coordinates: [47.0157644, 7.656979],
     name: "Bübü Handels GmbH",
     postcode: "3415",
     town: "Hasle-Rüegsau",
@@ -40,6 +45,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "riedtwil",
+    coordinates: [47.1406707, 7.6941208],
     name: "Landi Riedtwil",
     postcode: "3475",
     town: "Riedtwil",
@@ -47,6 +53,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "steffisburg",
+    coordinates: [46.7725385, 7.6318058],
     name: "Visualize GmbH",
     postcode: "3612",
     town: "Steffisburg",
@@ -54,6 +61,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "heimberg",
+    coordinates: [46.7789252, 7.6121246],
     name: "Swissballon GmbH",
     postcode: "3627",
     town: "Heimberg",
@@ -61,6 +69,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "frutigen",
+    coordinates: [46.5918864, 7.6530613],
     name: "PyroWillen GmbH",
     postcode: "3714",
     town: "Frutigen",
@@ -68,6 +77,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "mumpf",
+    coordinates: [47.5479558, 7.9115193],
     name: "Kreher Camping Shop",
     postcode: "4322",
     town: "Mumpf",
@@ -75,6 +85,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "oberdorf",
+    coordinates: [47.3945187, 7.7493454],
     name: "Weber Papeterie",
     postcode: "4436",
     town: "Oberdorf",
@@ -82,6 +93,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "rothrist",
+    coordinates: [47.3085707, 7.8932623],
     name: "3107 GmbH",
     postcode: "4852",
     town: "Rothrist",
@@ -90,6 +102,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "suhr",
+    coordinates: [47.375827, 8.0865794],
     name: "OTT Feuerwerk",
     postcode: "5034",
     town: "Suhr",
@@ -97,6 +110,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "fislisbach",
+    coordinates: [47.4355615, 8.2910918],
     name: "Calmart Papeterie",
     postcode: "5442",
     town: "Fislisbach",
@@ -104,6 +118,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "bremgarten",
+    coordinates: [47.3526618, 8.336039],
     name: "Feuerwerkszauber.ch GmbH",
     postcode: "5620",
     town: "Bremgarten",
@@ -111,6 +126,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "seon",
+    coordinates: [47.3531818, 8.160486],
     name: "Walti Spielwaren GmbH",
     postcode: "5703",
     town: "Seon",
@@ -118,6 +134,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "hallau",
+    coordinates: [47.6944737, 8.4658122],
     name: "Kurt Schwaninger AG",
     postcode: "8215",
     town: "Hallau",
@@ -125,6 +142,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "chur",
+    coordinates: [46.8582617, 9.5263954],
     name: "Ballon Service Schweiz",
     postcode: "7000",
     town: "Chur",
@@ -132,6 +150,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "kreuzlingen",
+    coordinates: [47.6475427, 9.1736742],
     name: "Farben Feuerwerk",
     postcode: "8280",
     town: "Kreuzlingen",
@@ -139,6 +158,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "sirnach",
+    coordinates: [47.4659384, 8.9942186],
     name: "Kläger Feuerwerk Sirnach",
     postcode: "8370",
     town: "Sirnach",
@@ -146,6 +166,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "frauenfeld",
+    coordinates: [47.5637524, 8.9085456],
     name: "Felix Feuerwerk",
     postcode: "8500",
     town: "Frauenfeld",
@@ -155,6 +176,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "mullheim",
+    coordinates: [47.6021836, 9.0020345],
     name: "Hausammann Helbock GmbH",
     postcode: "8555",
     town: "Müllheim Dorf",
@@ -162,6 +184,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "berg",
+    coordinates: [47.5969119, 9.1946015],
     name: "Beat Kressibucher",
     postcode: "8572",
     town: "Berg",
@@ -169,6 +192,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "uttwil",
+    coordinates: [47.580405, 9.34862],
     name: "Züllig Feuerwerk",
     postcode: "8592",
     town: "Uttwil",
@@ -176,6 +200,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "rapperswil",
+    coordinates: [47.2297061, 8.8282276],
     name: "Feuerwerk Verkaufsstand, Pyroparadies GmbH",
     postcode: "8640",
     town: "Rapperswil-Jona",
@@ -184,6 +209,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "pfaffikon",
+    coordinates: [47.2016777, 8.7866694],
     name: "Pyroparadies GmbH",
     postcode: "8808",
     town: "Pfäffikon",
@@ -191,6 +217,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "gais",
+    coordinates: [47.361351, 9.451757],
     name: "Eugster Feuerwerk",
     postcode: "9056",
     town: "Gais",
@@ -198,6 +225,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "lustmuhle",
+    coordinates: [47.4078809, 9.3688842],
     name: "Wonderworld GmbH",
     postcode: "9062",
     town: "Lustmühle",
@@ -205,6 +233,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "gossau",
+    coordinates: [47.4166143, 9.2534157],
     name: "Bochsler Feuerwerk",
     postcode: "9200",
     town: "Gossau",
@@ -212,6 +241,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "bichwil",
+    coordinates: [47.4298503, 9.1243945],
     name: "X-Effects GmbH",
     postcode: "9248",
     town: "Bichwil",
@@ -219,6 +249,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "niederuzwil",
+    coordinates: [47.4451946, 9.1389235],
     name: "Karin Senn",
     postcode: "9244",
     town: "Niederuzwil",
@@ -227,6 +258,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "wil-feuerwerkteam",
+    coordinates: [47.470458, 9.043829],
     name: "Feuerwerkteam.ch",
     postcode: "9500",
     town: "Wil",
@@ -235,6 +267,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "wil-stucki",
+    coordinates: [47.462524, 9.045735],
     name: "Stucki AG Wil",
     postcode: "9500",
     town: "Wil",
@@ -243,6 +276,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "niederhelfenschwil",
+    coordinates: [47.4759829, 9.1692828],
     name: "Stucki AG, Loo",
     postcode: "9527",
     town: "Niederhelfenschwil",
@@ -251,6 +285,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "wangi",
+    coordinates: [47.4924362, 8.9759919],
     name: "Heidi Dürlewanger",
     postcode: "9545",
     town: "Wängi",
@@ -259,6 +294,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "tobel",
+    coordinates: [47.518344, 9.0320076],
     name: "Nessensohn Eisenwaren",
     postcode: "9555",
     town: "Tobel",
@@ -266,6 +302,7 @@ export const retailers: Retailer[] = [
   },
   {
     id: "bazenheid",
+    coordinates: [47.4108894, 9.0695356],
     name: "Farben Feuerwerk",
     postcode: "9602",
     town: "Bazenheid",

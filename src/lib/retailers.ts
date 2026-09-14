@@ -1,5 +1,7 @@
 export type Retailer = {
   id: string;
+  /** WGS84 latitude, longitude; original public retailer map. */
+  coordinates: [number, number];
   name: string;
   postcode: string;
   town: string;

@@ -5,10 +5,14 @@ import {
   MapPin,
   Mountain,
   Sparkles,
+  Timer,
+  MoveUp,
+  Volume1,
 } from "lucide-react";
 import Hero from "@/components/Hero";
 import RetailerFinder from "@/components/RetailerFinder";
 import ProductVideo from "@/components/ProductVideo";
+import CookieConsent from "@/components/CookieConsent";
 import { retailers } from "@/data/retailers";
 
 export default function Home() {
@@ -41,7 +45,7 @@ export default function Home() {
             </h1>
             <p>
               Unser Globi. Ein Schweizer Original.
-              <br /> Und ein Funken Magie für deinen Festabend.
+              <br /> Leise. Rund 60 Sekunden Gold und Silber.
             </p>
           </div>
           <div className="hero-message hero-message-second" aria-hidden="true">
@@ -104,11 +108,35 @@ export default function Home() {
               </h2>
             </div>
             <p>
-              Manche Momente brauchen nicht viel.
-              <br /> Ein gemeinsamer Abend. Ein bisschen Vorfreude.
-              <br /> Und unseren Globi-Vulkan.
+              Goldener Vulkan mit Silberfunken und einer Brenndauer von rund 60
+              Sekunden. Die Fontäne steigt bis etwa sechs Meter hoch und
+              kombiniert warme Goldfunken mit hellen Silberakzenten.
             </p>
           </div>
+          <dl className="product-facts" aria-label="Produktdetails">
+            <div>
+              <dt>
+                <Timer size={18} aria-hidden="true" /> Brenndauer
+              </dt>
+              <dd>
+                60 <span>Sekunden</span>
+              </dd>
+            </div>
+            <div>
+              <dt>
+                <MoveUp size={18} aria-hidden="true" /> Effekthöhe
+              </dt>
+              <dd>
+                6 <span>m</span>
+              </dd>
+            </div>
+            <div>
+              <dt>
+                <Volume1 size={18} aria-hidden="true" /> Lautstärke
+              </dt>
+              <dd>Leise</dd>
+            </div>
+          </dl>
           <div className="experience-grid">
             <ProductVideo />
             <div className="effect-story">
@@ -127,8 +155,8 @@ export default function Home() {
                 <div>
                   <h3>Gold, das immer höher steigt.</h3>
                   <p>
-                    Die goldene Fontäne wird grösser und grösser. Ein Moment zum
-                    Innehalten.
+                    Die goldene Fontäne wird grösser und steigt bis etwa sechs
+                    Meter hoch. Ein Moment zum Innehalten.
                   </p>
                 </div>
               </div>
@@ -150,9 +178,7 @@ export default function Home() {
 
         <section className="swiss-story" aria-labelledby="swiss-title">
           <div className="shell swiss-story-inner">
-            <div className="swiss-story-symbol" aria-hidden="true">
-              +
-            </div>
+            <div className="swiss-story-symbol" aria-hidden="true"></div>
             <div>
               <p className="eyebrow">Von hier. Für besondere Abende.</p>
               <h2 id="swiss-title">
@@ -215,11 +241,10 @@ export default function Home() {
             <br /> © Orell Füssli AG · Globi Verlag, Imprint Orell Füssli
             Verlag, Zürich
           </p>
+          <CookieConsent />
           <span>
             Mit Globi. Aus der Schweiz.{" "}
-            <span className="footer-cross" aria-hidden="true">
-              +
-            </span>
+            <span className="footer-cross" aria-hidden="true"></span>
           </span>
         </div>
       </footer>

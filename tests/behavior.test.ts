@@ -121,7 +121,7 @@ test("standalone GLB contains textured full-circle geometry, fuse and valid mesh
   assert.equal(binary.readUInt32LE(0), 0x46546c67);
   assert.ok(binary.byteLength < 2_500_000, "Model should stay below 2.5 MB");
   const document = await new NodeIO().readBinary(binary);
-  assert.equal(document.getRoot().listTextures().length, 1);
+  assert.equal(document.getRoot().listTextures().length, 3);
   assert.ok(
     document.getRoot().listTextures()[0].getImage()!.byteLength > 10000,
   );
@@ -136,6 +136,23 @@ test("standalone GLB contains textured full-circle geometry, fuse and valid mesh
     .listMeshes()
     .find((m) => m.getName() === "Continuous 360 wrapper")!;
   const primitive = wrapper.listPrimitives()[0];
+  const material = primitive.getMaterial()!;
+  assert.ok(material.getBaseColorTexture()?.getImage());
+  assert.ok(material.getNormalTexture()?.getImage());
+  assert.ok(material.getMetallicRoughnessTexture()?.getImage());
+  for (const mesh of document.getRoot().listMeshes()) {
+    for (const part of mesh.listPrimitives()) {
+      const positions = part.getAttribute("POSITION")!.getArray()!;
+      const normals = part.getAttribute("NORMAL")!.getArray()!;
+      assert.ok(Array.from(positions).every(Number.isFinite), mesh.getName());
+      assert.ok(Array.from(normals).every(Number.isFinite), mesh.getName());
+      assert.ok(Array.from(part.getIndices()!.getArray()!).every((i) => i < positions.length / 3));
+    }
+  }
+  for (const name of ["Braided thread detail", "Braided cross weave"]) {
+    const braid = document.getRoot().listMeshes().find((m) => m.getName() === name)!;
+    assert.equal(braid.listPrimitives()[0].getIndices()!.getCount(), 600 * 4 * 6);
+  }
   const uv = primitive.getAttribute("TEXCOORD_0")!.getArray()!;
   assert.ok(Array.from(uv).every(Number.isFinite));
   assert.ok(Array.from(uv).every((v) => v >= 0 && v <= 1));

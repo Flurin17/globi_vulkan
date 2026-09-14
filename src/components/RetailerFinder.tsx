@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import {
   ArrowUpRight,
   Map,
@@ -11,13 +12,20 @@ import {
 } from "lucide-react";
 import { directionsUrl, filterRetailers, type Retailer } from "@/lib/retailers";
 
+const RetailerMap = dynamic(() => import("./RetailerMap"), {
+  ssr: false,
+  loading: () => <div className="map-loading" role="status">Die Globi-Karte wird geladen …</div>,
+});
+
 export default function RetailerFinder({
   retailers,
 }: {
   retailers: Retailer[];
 }) {
   const [query, setQuery] = useState("");
-  const [map, setMap] = useState(false);
+  const [map, setMap] = useState(true);
+  const [mapReady, setMapReady] = useState(false);
+  const finderRef = useRef<HTMLDivElement>(null);
   const [expanded, setExpanded] = useState(false);
   const results = useMemo(
     () =>
@@ -28,8 +36,21 @@ export default function RetailerFinder({
   );
   const visible = query.trim() || expanded ? results : results.slice(0, 6);
 
+  useEffect(() => {
+    const element = finderRef.current;
+    if (!element) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setMapReady(true);
+        observer.disconnect();
+      }
+    }, { rootMargin: "300px" });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="finder">
+    <div className="finder" ref={finderRef}>
       <div className="finder-controls">
         <div className="search-field">
           <Search size={21} aria-hidden="true" />
@@ -67,16 +88,9 @@ export default function RetailerFinder({
       </div>
       {map ? (
         <div className="retailer-map" id="retailer-map">
-          <iframe
-            title="Globi-Vulkan Verkaufsstellen auf Google Maps"
-            src="https://www.google.com/maps/d/embed?mid=1HWiR4UCmXTdLQK33odvpqW0qUEr-rtY&ehbc=2E312F&noprof=1"
-            loading="lazy"
-            referrerPolicy="strict-origin-when-cross-origin"
-          />
-          <p>
-            Die Übersichtskarte zeigt alle Verkaufsstellen. Deine Suche filtert
-            die Liste darunter.
-          </p>
+          {mapReady ? <RetailerMap retailers={results} /> : (
+            <div className="map-loading" role="status">Die Globi-Karte wird geladen …</div>
+          )}
         </div>
       ) : null}
       <div className="finder-summary">

@@ -1,0 +1,303 @@
+{
+  "source": "https://www.google.com/maps/d/kml?mid=1HWiR4UCmXTdLQK33odvpqW0qUEr-rtY&forcekml=1",
+  "checked": "2026-09-14",
+  "note": "Coordinates matched to the 37 website listings. Additional Unterengstringen map-only location excluded from the website directory. Coordinates are source positions, not independently surveyed.",
+  "locations": [
+    {
+      "id": "st-ursen",
+      "sourceName": "Arnold Feuerwerk",
+      "coordinates": [
+        46.7923793,
+        7.215543
+      ]
+    },
+    {
+      "id": "bern",
+      "sourceName": "Stärnehimu Feuerwerk GmbH",
+      "coordinates": [
+        46.944309,
+        7.435913
+      ]
+    },
+    {
+      "id": "biel",
+      "sourceName": "Ballon Beyeler Dekor- und Partyshop",
+      "coordinates": [
+        47.139773,
+        7.2440039
+      ]
+    },
+    {
+      "id": "zollikofen",
+      "sourceName": "Papeterie Hell GmbH",
+      "coordinates": [
+        46.9936868,
+        7.4571369
+      ]
+    },
+    {
+      "id": "hasle",
+      "sourceName": "Bübü Handels GmbH",
+      "coordinates": [
+        47.0157644,
+        7.656979
+      ]
+    },
+    {
+      "id": "riedtwil",
+      "sourceName": "LANDI Riedtwil, Genossenschaft",
+      "coordinates": [
+        47.1406707,
+        7.6941208
+      ]
+    },
+    {
+      "id": "heimberg",
+      "sourceName": "swissballon GmbH",
+      "coordinates": [
+        46.7789252,
+        7.6121246
+      ]
+    },
+    {
+      "id": "frutigen",
+      "sourceName": "PyroWillen GmbH",
+      "coordinates": [
+        46.5918864,
+        7.6530613
+      ]
+    },
+    {
+      "id": "mumpf",
+      "sourceName": "Kreher Camping Shop",
+      "coordinates": [
+        47.5479558,
+        7.9115193
+      ]
+    },
+    {
+      "id": "oberdorf",
+      "sourceName": "Papeterie & Bürobedarf Martin Weber",
+      "coordinates": [
+        47.3945187,
+        7.7493454
+      ]
+    },
+    {
+      "id": "rothrist",
+      "sourceName": "3107 GmbH",
+      "coordinates": [
+        47.3085707,
+        7.8932623
+      ]
+    },
+    {
+      "id": "suhr",
+      "sourceName": "OTT Feuerwerk Suhr",
+      "coordinates": [
+        47.375827,
+        8.0865794
+      ]
+    },
+    {
+      "id": "bremgarten",
+      "sourceName": "Feuerwerkszauber.ch GmbH",
+      "coordinates": [
+        47.3526618,
+        8.336039
+      ]
+    },
+    {
+      "id": "seon",
+      "sourceName": "Walti Spielwaren GmbH",
+      "coordinates": [
+        47.3531818,
+        8.160486
+      ]
+    },
+    {
+      "id": "hallau",
+      "sourceName": "Kurt Schwaninger AG",
+      "coordinates": [
+        47.6944737,
+        8.4658122
+      ]
+    },
+    {
+      "id": "sirnach",
+      "sourceName": "Kläger Feuerwerk Sirnach",
+      "coordinates": [
+        47.4659384,
+        8.9942186
+      ]
+    },
+    {
+      "id": "mullheim",
+      "sourceName": "hausammann helbock GmbH",
+      "coordinates": [
+        47.6021836,
+        9.0020345
+      ]
+    },
+    {
+      "id": "berg",
+      "sourceName": "Beat Kressibucher",
+      "coordinates": [
+        47.5969119,
+        9.1946015
+      ]
+    },
+    {
+      "id": "uttwil",
+      "sourceName": "Koko Züllig",
+      "coordinates": [
+        47.580405,
+        9.34862
+      ]
+    },
+    {
+      "id": "rapperswil",
+      "sourceName": "Pyroparadies GmbH",
+      "coordinates": [
+        47.2297061,
+        8.8282276
+      ]
+    },
+    {
+      "id": "pfaffikon",
+      "sourceName": "Pyroparadies GmbH",
+      "coordinates": [
+        47.2016777,
+        8.7866694
+      ]
+    },
+    {
+      "id": "gais",
+      "sourceName": "Eugster Feuerwerk",
+      "coordinates": [
+        47.361351,
+        9.451757
+      ]
+    },
+    {
+      "id": "lustmuhle",
+      "sourceName": "Wonderworld GmbH",
+      "coordinates": [
+        47.4078809,
+        9.3688842
+      ]
+    },
+    {
+      "id": "gossau",
+      "sourceName": "Bochsler Feuerwerk",
+      "coordinates": [
+        47.4166143,
+        9.2534157
+      ]
+    },
+    {
+      "id": "bichwil",
+      "sourceName": "X-EFFECTS GmbH",
+      "coordinates": [
+        47.4298503,
+        9.1243945
+      ]
+    },
+    {
+      "id": "niederuzwil",
+      "sourceName": "Karin Senn Feuerwerk",
+      "coordinates": [
+        47.4451946,
+        9.1389235
+      ]
+    },
+    {
+      "id": "wil-feuerwerkteam",
+      "sourceName": "Feuerwerkteam GmbH",
+      "coordinates": [
+        47.470458,
+        9.043829
+      ]
+    },
+    {
+      "id": "wil-stucki",
+      "sourceName": "Stucki AG Wil",
+      "coordinates": [
+        47.462524,
+        9.045735
+      ]
+    },
+    {
+      "id": "niederhelfenschwil",
+      "sourceName": "Stucki AG Feuerwerk",
+      "coordinates": [
+        47.4759829,
+        9.1692828
+      ]
+    },
+    {
+      "id": "wangi",
+      "sourceName": "Heidi's Feuerwerk",
+      "coordinates": [
+        47.4924362,
+        8.9759919
+      ]
+    },
+    {
+      "id": "tobel",
+      "sourceName": "Nessensohn Regula, Eisenwaren & Haushalt",
+      "coordinates": [
+        47.518344,
+        9.0320076
+      ]
+    },
+    {
+      "id": "bazenheid",
+      "sourceName": "Farben Feuerwerk Bazenheid",
+      "coordinates": [
+        47.4108894,
+        9.0695356
+      ]
+    },
+    {
+      "id": "kreuzlingen",
+      "sourceName": "Farben Feuerwerk Kreuzlingen",
+      "coordinates": [
+        47.6475427,
+        9.1736742
+      ]
+    },
+    {
+      "id": "fislisbach",
+      "sourceName": "Papeterie Calmart AG",
+      "coordinates": [
+        47.4355615,
+        8.2910918
+      ]
+    },
+    {
+      "id": "steffisburg",
+      "sourceName": "Visualize GmbH",
+      "coordinates": [
+        46.7725385,
+        7.6318058
+      ]
+    },
+    {
+      "id": "chur",
+      "sourceName": "Ballon Service Schweiz GmbH",
+      "coordinates": [
+        46.8582617,
+        9.5263954
+      ]
+    },
+    {
+      "id": "frauenfeld",
+      "sourceName": "Felix Feuerwerk",
+      "coordinates": [
+        47.5637524,
+        8.9085456
+      ]
+    }
+  ]
+}

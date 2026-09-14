@@ -1,6 +1,6 @@
 // Shared modelling data: parameter 0 is inside the cone, parameter 1 is the outer tip.
 export const FUSE_POINTS: [number, number, number][] = [
-  [0, 1.58, 0],
+  [0, 1.56, 0],
   [0.08, 1.77, 0.015],
   [0.24, 1.8, 0.02],
   [0.46, 1.66, 0.035],

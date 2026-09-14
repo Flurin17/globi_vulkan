@@ -11,13 +11,13 @@ export function sceneAtProgress(value: number) {
   // Finish the rotation, consume the fuse from tip to base, then start the fountain.
   const fuseBurn = clamp((progress - 0.56) / 0.17);
   const ignition = smooth((progress - 0.73) / 0.05);
-  const fountain = smooth((progress - 0.78) / 0.2);
+  const fountain = smooth((progress - 0.78) / 0.14);
   return {
     progress,
     rotation: turn * Math.PI * 2,
     tilt: -0.16 * (1 - smooth(progress / 0.5)),
-    scale: 1 - smooth((progress - 0.58) / 0.24) * 0.46,
-    drop: smooth((progress - 0.58) / 0.24) * 0.94,
+    scale: 1 - smooth((progress - 0.58) / 0.24) * 0.58,
+    drop: smooth((progress - 0.58) / 0.24) * 1.22,
     fuseBurn,
     ignition,
     fountain,

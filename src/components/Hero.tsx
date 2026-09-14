@@ -113,9 +113,7 @@ export default function Hero({ children }: { children: ReactNode }) {
         <div className="hero-inner shell">
           <div className="hero-copy">
             <div className="eyebrow">
-              <span className="swiss-mark" aria-hidden="true">
-                +
-              </span>{" "}
+              <span className="swiss-mark" aria-hidden="true"></span>{" "}
               Ein echtes Stück Schweiz
             </div>
             <div className="hero-headlines">{children}</div>
@@ -132,9 +130,7 @@ export default function Hero({ children }: { children: ReactNode }) {
             <div className="product-halo" aria-hidden="true" />
             <div className="swiss-seal">
               <span>Mit Globi.</span>
-              <span className="seal-cross" aria-hidden="true">
-                +
-              </span>
+              <span className="seal-cross" aria-hidden="true"></span>
               <span>Aus der Schweiz.</span>
             </div>
             <div className="poster-container">

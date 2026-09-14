@@ -26,14 +26,61 @@ const texture = document
   .createTexture("Full 360 degree illustrated wrapper")
   .setImage(await readFile("public/assets/globi-wrapper.jpg"))
   .setMimeType("image/jpeg");
+
+// Small, deterministic material maps keep the asset self-contained. The grain
+// belongs to the paper surface, so it responds to light rather than painted shade.
+const width = 256;
+const height = 512;
+const heights = new Float32Array(width * height);
+let seed = 8173;
+const random = () => {
+  seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+  return seed / 4294967296;
+};
+for (let y = 0; y < height; y++)
+  for (let x = 0; x < width; x++) {
+    const u = x / width;
+    heights[y * width + x] =
+      random() * 0.22 +
+      Math.sin(u * Math.PI * 2 * 41 + Math.sin(y * 0.024)) * 0.035 +
+      Math.sin(u * Math.PI * 2 * 7 + y * 0.009) * 0.1;
+  }
+const normals = new Uint8Array(width * height * 3);
+const surface = new Uint8Array(normals.length);
+const sample = (x, y) => heights[((y + height) % height) * width + ((x + width) % width)];
+for (let y = 0; y < height; y++)
+  for (let x = 0; x < width; x++) {
+    const i = (y * width + x) * 3;
+    const normal = new THREE.Vector3(
+      (sample(x - 1, y) - sample(x + 1, y)) * 0.65,
+      (sample(x, y - 1) - sample(x, y + 1)) * 0.65,
+      1,
+    ).normalize();
+    normals[i] = Math.round((normal.x * 0.5 + 0.5) * 255);
+    normals[i + 1] = Math.round((normal.y * 0.5 + 0.5) * 255);
+    normals[i + 2] = Math.round((normal.z * 0.5 + 0.5) * 255);
+    surface[i] = 255;
+    surface[i + 1] = Math.round(151 + sample(x, y) * 32);
+    surface[i + 2] = 0;
+  }
+const embeddedMap = async (name, data) => document.createTexture(name)
+  .setImage(await sharp(data, { raw: { width, height, channels: 3 } }).png().toBuffer())
+  .setMimeType("image/png");
+const normalMap = await embeddedMap("Paper fibres and fine wrinkles", normals);
+const roughnessMap = await embeddedMap("Uneven paper finish", surface);
 const paper = document
-  .createMaterial("Printed matte paper")
+  .createMaterial("Printed satin paper")
   .setBaseColorTexture(texture)
-  .setRoughnessFactor(0.82)
+  .setNormalTexture(normalMap)
+  .setNormalScale(0.7)
+  .setMetallicRoughnessTexture(roughnessMap)
+  .setRoughnessFactor(1)
   .setMetallicFactor(0);
 const inner = document
   .createMaterial("Dark top opening")
-  .setBaseColorFactor([0.055, 0.044, 0.03, 1])
+  .setBaseColorFactor([0.065, 0.039, 0.023, 1])
+  .setNormalTexture(normalMap)
+  .setNormalScale(2.5)
   .setRoughnessFactor(1);
 const rim = document
   .createMaterial("Blue paper edge")
@@ -41,12 +88,19 @@ const rim = document
   .setRoughnessFactor(0.85);
 const green = document
   .createMaterial("Green braided fuse")
-  .setBaseColorFactor([0.045, 0.18, 0.075, 1])
-  .setRoughnessFactor(0.92);
+  .setBaseColorFactor([0.018, 0.19, 0.065, 1])
+  .setRoughnessFactor(0.76);
 const thread = document
   .createMaterial("Fuse thread")
-  .setBaseColorFactor([0.24, 0.31, 0.13, 1])
-  .setRoughnessFactor(0.95);
+  .setBaseColorFactor([0.23, 0.34, 0.105, 1])
+  .setRoughnessFactor(0.88);
+const cardboard = document.createMaterial("Uncoated cardboard edge")
+  .setBaseColorFactor([0.23, 0.16, 0.083, 1])
+  .setNormalTexture(normalMap)
+  .setRoughnessFactor(0.94);
+const baseEdge = document.createMaterial("Folded green paper edge")
+  .setBaseColorFactor([0.23, 0.34, 0.024, 1])
+  .setRoughnessFactor(0.72);
 
 function mesh(name, geometry, material) {
   const primitive = document.createPrimitive().setMaterial(material);
@@ -85,24 +139,49 @@ function mesh(name, geometry, material) {
   return node;
 }
 
-mesh(
-  "Continuous 360 wrapper",
-  new THREE.CylinderGeometry(0.168, 0.625, 3.18, 128, 24, true, Math.PI),
-  paper,
-);
+function paperShell(start = Math.PI, length = Math.PI * 2, segments = 128, overlap = 0) {
+  const geometry = new THREE.CylinderGeometry(0.168, 0.625, 3.18, segments, 24, true, start, length);
+  const positions = geometry.getAttribute("position");
+  for (let i = 0; i < positions.count; i++) {
+    const x = positions.getX(i);
+    const y = positions.getY(i);
+    const z = positions.getZ(i);
+    const angle = Math.atan2(x, z);
+    const radius = Math.hypot(x, z);
+    // Subtle creases, strongest near the folded base; periodic at the UV seam.
+    const crease = (Math.sin(angle * 19 + y * 1.2) * 0.0008 +
+      Math.sin(angle * 37 - y * 2.1) * 0.00035) * (1.3 - y * 0.2);
+    const r = radius + crease + overlap;
+    positions.setXYZ(i, x * r / radius, y, z * r / radius);
+  }
+  geometry.computeVertexNormals();
+  return geometry;
+}
+mesh("Continuous 360 wrapper", paperShell(), paper);
+const seam = paperShell(Math.PI, 0.038, 2, 0.0014);
+const seamUV = seam.getAttribute("uv");
+for (let i = 0; i < seamUV.count; i++)
+  seamUV.setX(i, seamUV.getX(i) * 0.038 / (Math.PI * 2));
+mesh("Overlapping paper seam", seam, paper);
 mesh(
   "Top opening",
-  new THREE.CylinderGeometry(0.158, 0.158, 0.012, 64),
+  new THREE.CylinderGeometry(0.154, 0.154, 0.022, 64),
   inner,
-).setTranslation([0, 1.575, 0]);
+).setTranslation([0, 1.552, 0]);
+mesh("Inner cardboard collar", new THREE.CylinderGeometry(0.16, 0.157, 0.034, 96, 1, true),
+  cardboard.setDoubleSided(true),
+).setTranslation([0, 1.57, 0]);
 mesh(
   "Bottom paper edge",
-  new THREE.CylinderGeometry(0.625, 0.625, 0.015, 128),
-  paper,
+  new THREE.CylinderGeometry(0.622, 0.62, 0.018, 128),
+  baseEdge,
 ).setTranslation([0, -1.59, 0]);
+mesh("Recessed cardboard base", new THREE.CylinderGeometry(0.61, 0.61, 0.012, 96),
+  cardboard,
+).setTranslation([0, -1.588, 0]);
 mesh(
   "Rolled top rim",
-  new THREE.TorusGeometry(0.164, 0.0045, 8, 96).rotateX(Math.PI / 2),
+  new THREE.TorusGeometry(0.164, 0.004, 8, 96).rotateX(Math.PI / 2),
   rim,
 ).setTranslation([0, 1.59, 0]);
 const curve = new THREE.CatmullRomCurve3(
@@ -120,27 +199,19 @@ mesh(
   green,
 );
 const frames = curve.computeFrenetFrames(240, false);
-const points = [];
-for (let i = 0; i <= 240; i++) {
-  const a = (i / 240) * Math.PI * 2 * 35;
-  points.push(
-    curve
-      .getPointAt(i / 240)
+for (const direction of [1, -1]) {
+  const points = [];
+  for (let i = 0; i <= 240; i++) {
+    const a = (i / 240) * Math.PI * 2 * 35 * direction;
+    points.push(curve.getPointAt(i / 240)
       .addScaledVector(frames.normals[i], Math.cos(a) * 0.012)
-      .addScaledVector(frames.binormals[i], Math.sin(a) * 0.012),
-  );
+      .addScaledVector(frames.binormals[i], Math.sin(a) * 0.012));
+  }
+  mesh(direction === 1 ? "Braided thread detail" : "Braided cross weave",
+    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points),
+      THREAD_SEGMENTS, 0.0022, THREAD_RADIAL_SEGMENTS, false),
+    thread);
 }
-mesh(
-  "Braided thread detail",
-  new THREE.TubeGeometry(
-    new THREE.CatmullRomCurve3(points),
-    THREAD_SEGMENTS,
-    0.0023,
-    THREAD_RADIAL_SEGMENTS,
-    false,
-  ),
-  thread,
-);
 root.setExtras({
   source: "https://www.globi-vulkan.ch/index.html",
   note: "Illustrated reconstruction from a single front photograph; unseen wrapper scenery is artistic, not a scan of the production label.",
