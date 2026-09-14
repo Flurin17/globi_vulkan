@@ -1,3 +1,4 @@
+import Image from "next/image";
 import {
   ArrowDown,
   ArrowUpRight,
@@ -20,10 +21,7 @@ export default function Home() {
     <>
       <header className="site-header shell">
         <a href="#" className="wordmark" aria-label="Globi-Vulkan Startseite">
-          globi
-          <span>
-            vulkan<span className="wordmark-dot">.</span>
-          </span>
+          <Image src="/assets/globi-vulkan-logo.svg" alt="Globi Vulkan" width={2405} height={349} className="wordmark-logo" preload />
         </a>
         <nav aria-label="Hauptnavigation">
           <a href="#globi-vulkan">Der Vulkan</a>
@@ -225,10 +223,7 @@ export default function Home() {
       <footer className="site-footer">
         <div className="shell footer-top">
           <a href="#" className="wordmark">
-            globi
-            <span>
-              vulkan<span className="wordmark-dot">.</span>
-            </span>
+            <Image src="/assets/globi-vulkan-logo-light.svg" alt="Globi Vulkan" width={2405} height={349} className="wordmark-logo" />
           </a>
           <p>Ein Vulkan. Goldene Momente.</p>
           <a className="back-top" href="#">

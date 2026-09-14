@@ -202,20 +202,15 @@ img {
 }
 .wordmark {
   display: flex;
-  align-items: baseline;
-  gap: 5px;
-  font-family: var(--font-display), sans-serif;
+  align-items: center;
+  flex-shrink: 0;
   font-size: 31px;
-  font-weight: 600;
-  letter-spacing: -1.6px;
-  color: var(--blue);
   line-height: 1;
 }
-.wordmark > span {
-  font-weight: 400;
-}
-.wordmark-dot {
-  color: var(--red);
+.wordmark-logo {
+  display: block;
+  width: 7.1em;
+  height: auto;
 }
 .site-header nav {
   display: flex;
