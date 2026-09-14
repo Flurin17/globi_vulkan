@@ -143,7 +143,7 @@ function mesh(name, geometry, material) {
 }
 
 function paperShell(start = Math.PI, length = Math.PI * 2, segments = 128, overlap = 0) {
-  const geometry = new THREE.CylinderGeometry(0.168, 0.625, 3.18, segments, 24, true, start, length);
+  const geometry = new THREE.CylinderGeometry(0.168, 0.69, 3.18, segments, 24, true, start, length);
   const positions = geometry.getAttribute("position");
   for (let i = 0; i < positions.count; i++) {
     const x = positions.getX(i);
@@ -169,24 +169,24 @@ mesh("Overlapping paper seam", seam, paper);
 // The reference has a solid, shallow black dome above the blue wrapper.
 // Start slightly inside the rim to close the shell; the fuse emerges through it.
 const capProfile = [new THREE.Vector2(0.166, -0.008)];
-for (let i = 0; i <= 24; i++) {
-  const angle = (i / 24) * Math.PI / 2;
+for (let i = 0; i <= 8; i++) {
+  const angle = (i / 8) * Math.PI / 2;
   capProfile.push(new THREE.Vector2(
-    i === 24 ? 0 : 0.166 * Math.cos(angle),
+    i === 8 ? 0 : 0.166 * Math.cos(angle),
     0.06 * Math.sin(angle),
   ));
 }
-mesh("Raised black top cap", new THREE.LatheGeometry(capProfile, 96), cap)
+mesh("Raised black top cap", new THREE.LatheGeometry(capProfile, 28), cap)
   .setTranslation([0, 1.59, 0]);
 mesh("Inner cardboard collar", new THREE.CylinderGeometry(0.16, 0.157, 0.034, 96, 1, true),
   cardboard.setDoubleSided(true),
 ).setTranslation([0, 1.57, 0]);
 mesh(
   "Bottom paper edge",
-  new THREE.CylinderGeometry(0.622, 0.62, 0.018, 128),
+  new THREE.CylinderGeometry(0.687, 0.685, 0.018, 128),
   baseEdge,
 ).setTranslation([0, -1.59, 0]);
-mesh("Recessed cardboard base", new THREE.CylinderGeometry(0.61, 0.61, 0.012, 96),
+mesh("Recessed cardboard base", new THREE.CylinderGeometry(0.675, 0.675, 0.012, 96),
   cardboard,
 ).setTranslation([0, -1.588, 0]);
 mesh(
