@@ -77,9 +77,9 @@ const paper = document
   .setMetallicRoughnessTexture(roughnessMap)
   .setRoughnessFactor(1)
   .setMetallicFactor(0);
-const inner = document
-  .createMaterial("Dark top opening")
-  .setBaseColorFactor([0.065, 0.039, 0.023, 1])
+const cap = document
+  .createMaterial("Matte charcoal top cap")
+  .setBaseColorFactor([0.018, 0.014, 0.012, 1])
   .setNormalTexture(normalMap)
   .setNormalScale(2.5)
   .setRoughnessFactor(1);
@@ -166,11 +166,18 @@ const seamUV = seam.getAttribute("uv");
 for (let i = 0; i < seamUV.count; i++)
   seamUV.setX(i, seamUV.getX(i) * 0.038 / (Math.PI * 2));
 mesh("Overlapping paper seam", seam, paper);
-mesh(
-  "Top opening",
-  new THREE.CylinderGeometry(0.154, 0.154, 0.022, 64),
-  inner,
-).setTranslation([0, 1.552, 0]);
+// The reference has a solid, shallow black dome above the blue wrapper.
+// Start slightly inside the rim to close the shell; the fuse emerges through it.
+const capProfile = [new THREE.Vector2(0.166, -0.008)];
+for (let i = 0; i <= 24; i++) {
+  const angle = (i / 24) * Math.PI / 2;
+  capProfile.push(new THREE.Vector2(
+    i === 24 ? 0 : 0.166 * Math.cos(angle),
+    0.06 * Math.sin(angle),
+  ));
+}
+mesh("Raised black top cap", new THREE.LatheGeometry(capProfile, 96), cap)
+  .setTranslation([0, 1.59, 0]);
 mesh("Inner cardboard collar", new THREE.CylinderGeometry(0.16, 0.157, 0.034, 96, 1, true),
   cardboard.setDoubleSided(true),
 ).setTranslation([0, 1.57, 0]);
