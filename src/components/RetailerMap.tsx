@@ -5,7 +5,7 @@ import L from "leaflet";
 import "leaflet.markercluster";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
-import { ArrowUpRight, X } from "lucide-react";
+import { ArrowUpRight, ExternalLink, X } from "lucide-react";
 import RetailerMapShell from "./RetailerMapShell";
 import { directionsUrl, type Retailer } from "@/lib/retailers";
 
@@ -105,10 +105,10 @@ export default function RetailerMap({ retailers }: { retailers: Retailer[] }) {
         title: `${retailer.name}, ${retailer.town}`,
         alt: `${retailer.name}, ${retailer.town}`,
         keyboard: true,
+        autoPanOnFocus: false,
       });
       marker.on("click", () => {
         setSelectedId(retailer.id);
-        map.panTo(retailer.coordinates, { animate: false });
       });
       marker.on("add", () => {
         const element = marker.getElement();
@@ -141,7 +141,17 @@ export default function RetailerMap({ retailers }: { retailers: Retailer[] }) {
       </div>
       {selected ? (
         <div className="map-selection" aria-live="polite">
-          <div><span className="map-selection-town">{selected.postcode} {selected.town}</span><h3>{selected.name}</h3><p>{selected.address}{selected.note ? ` · ${selected.note}` : ""}</p></div>
+          <div>
+            <span className="map-selection-town">{selected.postcode} {selected.town}</span>
+            <h3>{selected.name}</h3>
+            <p>{selected.address}{selected.note ? ` · ${selected.note}` : ""}</p>
+            {selected.website ? (
+              <a className="retailer-website" href={selected.website} target="_blank" rel="noreferrer">
+                Website <ExternalLink size={12} />
+                <span className="sr-only"> von {selected.name} (neuer Tab)</span>
+              </a>
+            ) : null}
+          </div>
           <a className="button button-blue" href={directionsUrl(selected)} target="_blank" rel="noreferrer">Route planen <ArrowUpRight size={17} /><span className="sr-only"> (Google Maps, neuer Tab)</span></a>
           <button className="map-close" onClick={() => setSelectedId(null)} type="button" aria-label="Händlerdetails schliessen"><X size={18} /></button>
         </div>
