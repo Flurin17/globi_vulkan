@@ -2,12 +2,15 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createSparkAttributes, fountainEnvelope, FOUNTAIN_CYCLE_SECONDS } from "../src/lib/fountain";
 
-test("reference sequence starts gently in green, builds to gold, then stops emitting before its tail clears", () => {
+test("fountain builds to full launch power in time to reach full height around 2.5 seconds", () => {
   assert.equal(fountainEnvelope(0).power, 0);
-  assert.ok(fountainEnvelope(1).power > 0 && fountainEnvelope(1).power < .35);
+  assert.ok(fountainEnvelope(.1).power > 0 && fountainEnvelope(.1).power < .35);
+  assert.ok(fountainEnvelope(1).power > .5 && fountainEnvelope(1).power < 1);
+  assert.equal(fountainEnvelope(1.6).power, 1);
+  assert.equal(fountainEnvelope(2.5).power, 1);
   assert.equal(fountainEnvelope(1).green, 1);
   assert.equal(fountainEnvelope(7).green, 0);
-  assert.ok(fountainEnvelope(10).power < fountainEnvelope(16).power);
+  assert.equal(fountainEnvelope(10).power, fountainEnvelope(16).power);
   assert.equal(fountainEnvelope(20).power, 1);
   assert.ok(fountainEnvelope(22).power < fountainEnvelope(21).power);
   for (let t = 23; t < FOUNTAIN_CYCLE_SECONDS; t += .1) {

@@ -26,3 +26,15 @@
 - Compiled and rendered all three shader pairs (sparks, smoke, jet) directly with native ModernGL on Apple M5, without browser-based capture. Reviewed ignition, growth, full output, burnout and smoke-only frames against the extracted reference at 720 × 780 and 300 × 470. Saved an effect-only 28-second MP4 preview. Adjusted the settled cone scale and drop to keep its base grounded while leaving more headroom above the plume. The native harness translates GLSL declarations to desktop GLSL and uses the scene's camera/source transforms. This checks the effect itself; it does not constitute a browser layout or physical mobile-device benchmark. Preview evidence is in `artifacts/fountain/`.
 - `pnpm verify` passes: lint, TypeScript, 22 tests and production build. Three new tests cover the burn/cooling interval, finite/repeating timing and deterministic mobile/desktop particle data including complete crackle groups.
 - Local changes only; no commit or deployment.
+
+## Missing sparks correction — 2026-09-15
+
+- Reproduced the reported smoke/jet-only result in the actual local browser page. The spark billboard used a reflected screen-space basis, reversing every triangle's winding; Three.js correctly culled those back faces. Corrected the perpendicular vector to preserve front-facing triangles.
+- The previous native preview disabled face culling, so it missed this integration failure. Added `pnpm test:fountain-gpu` using the shipped GLSL, Three.js plane geometry and the actual particle data. Confirmed it fails before the fix with zero lit pixels and passes afterward at 1, 16 and 20 seconds for 720 × 780 and 300 × 470, with culled and unculled renders identical.
+- Browser-verified visible gold/silver sparks on the actual page, without shader errors. Saved page screenshots in `artifacts/fountain-check/`. The dependency's existing Clock deprecation warning remains unchanged as requested.
+- `pnpm verify` passes (lint, TypeScript, 22 tests, production build), plus all six GPU regression cases.
+
+## Faster fountain rise — 2026-09-15
+
+- Moved the launch-power ramp to 0.3–1.6 seconds, allowing about another 0.9 seconds of particle flight to reach full height. The 28-second cycle and existing colour/burnout timing are preserved.
+- Updated timing assertions and added native render checks at 2.5 seconds. Both desktop and mobile reach at least the measured mature plume height by then; all eight GPU cases pass. `pnpm verify` also passes.

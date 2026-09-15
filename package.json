@@ -13,6 +13,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
+    "test:fountain-gpu": "tsx scripts/export-fountain-check.ts && uv run --with moderngl==5.12.0 python scripts/verify-fountain-render.py",
     "assets:build": "node scripts/build-model.mjs",
     "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },

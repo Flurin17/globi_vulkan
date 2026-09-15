@@ -6,8 +6,9 @@ export const FOUNTAIN_TIMING = {
   ignitionEnd: 0.7,
   greenStartFade: 3,
   greenEnd: 6,
-  growthStart: 4,
-  growthEnd: 15,
+  growthStart: 0.3,
+  // Full launch power at 1.6s leaves ~0.9s for sparks to reach their apex.
+  growthEnd: 1.6,
   burnoutStart: 21,
   burnoutEnd: 23,
 } as const;

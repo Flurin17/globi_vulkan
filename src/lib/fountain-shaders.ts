@@ -91,8 +91,10 @@ export const sparkVertexShader = `
     float radius = width * (2.0 + glint * 3.5);
     float lengthPx = max(width, streak);
     vec2 center = mix(tailPx, headPx, .5);
+    // Preserve the plane's counter-clockwise winding. The opposite
+    // perpendicular mirrors every triangle and FrontSide culls all sparks.
     vec2 pixel = center + axis * position.y * (lengthPx + radius * 2.0)
-      + vec2(-axis.y, axis.x) * position.x * radius * 2.0;
+      + vec2(axis.y, -axis.x) * position.x * radius * 2.0;
     gl_Position = headClip;
     gl_Position.xy = pixel * 2.0 / uResolution * headClip.w;
     float cooling = smoothstep(.12, life, age);
