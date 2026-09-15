@@ -17,8 +17,9 @@ export function sceneAtProgress(value: number) {
     progress,
     rotation: turn * Math.PI * 2,
     tilt: -0.16 * (1 - smooth(progress / 0.5)),
-    scale: 1 - settle * 0.58,
-    drop: settle * 1.22,
+    // Keep the lit cone grounded while leaving room for a much taller plume.
+    scale: 1 - settle * 0.72,
+    drop: settle * 1.39,
     settle,
     fuseBurn,
     ignition,
