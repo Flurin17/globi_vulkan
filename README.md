@@ -4,7 +4,7 @@ German product website built with Next.js 16.3.5 (App Router), React 19.2.8, Typ
 
 ## Run locally
 
-Requires Node.js 22.18+ and pnpm 10.
+Requires Node.js 22.18+ and pnpm 12.
 
 ```sh
 pnpm install --frozen-lockfile
